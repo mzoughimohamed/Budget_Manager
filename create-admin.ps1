@@ -1,11 +1,11 @@
 # Creates a Django superuser for the budget app.
 # Requires the stack to be running: docker compose up -d
 
-Write-Host "=== Budget App — Create Admin User ===" -ForegroundColor Cyan
+Write-Host "=== Budget App - Create Admin User ===" -ForegroundColor Cyan
 Write-Host ""
 
 $username = Read-Host "Username"
-$email    = Read-Host "Email (optional, press Enter to skip)"
+$email    = Read-Host "Email (leave blank to skip)"
 
 $securePass    = Read-Host "Password" -AsSecureString
 $secureConfirm = Read-Host "Confirm password" -AsSecureString
@@ -36,6 +36,6 @@ if ($LASTEXITCODE -eq 0) {
     Write-Host "Admin user '$username' created. Log in at http://localhost:5173" -ForegroundColor Green
 } else {
     Write-Host ""
-    Write-Host "Failed to create admin user (exit code $LASTEXITCODE)." -ForegroundColor Red
+    Write-Host "Failed to create admin user. Exit code: $LASTEXITCODE" -ForegroundColor Red
     exit $LASTEXITCODE
 }
