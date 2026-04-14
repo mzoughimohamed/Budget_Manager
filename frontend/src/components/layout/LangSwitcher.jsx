@@ -14,6 +14,8 @@ export default function LangSwitcher() {
         <button
           key={code}
           onClick={() => setLang(code)}
+          aria-pressed={lang === code}
+          aria-label={`Switch language to ${code}`}
           className={`px-2 py-1 rounded text-xs font-medium transition-colors ${
             lang === code ? 'bg-app-accent text-white' : 'text-gray-500 hover:bg-gray-100'
           }`}

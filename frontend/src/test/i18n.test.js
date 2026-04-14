@@ -25,7 +25,7 @@ describe('translation files', () => {
   })
 
   it('no translation is an empty string', () => {
-    for (const [lang, dict] of [['fr', fr], ['ar', ar]]) {
+    for (const [lang, dict] of [['en', en], ['fr', fr], ['ar', ar]]) {
       for (const [key, val] of Object.entries(dict)) {
         expect(val, `${lang}.${key} must not be empty`).not.toBe('')
       }
