@@ -34,7 +34,7 @@ export default function IncomeSourcesTable({ incomeSources, month }) {
       <h3 className="font-semibold text-gray-700 mb-4">{t('planning_income_sources')}</h3>
       <div className="space-y-2 mb-4">
         {incomeSources.map((src) => (
-          <div key={src.id} className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
+          <div key={src.id} className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg rtl:flex-row-reverse">
             <span className="flex-1 text-sm font-medium text-gray-700">{src.name}</span>
             {editId === src.id ? (
               <>
@@ -63,7 +63,7 @@ export default function IncomeSourcesTable({ incomeSources, month }) {
           </div>
         ))}
       </div>
-      <div className="flex gap-2">
+      <div className="flex gap-2 rtl:flex-row-reverse">
         <input
           type="text"
           placeholder={t('planning_source_name')}

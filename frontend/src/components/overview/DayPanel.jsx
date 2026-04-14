@@ -8,7 +8,7 @@ export default function DayPanel({ date, transactions, onClose, onAddTransaction
   const formattedDate = format(new Date(date + 'T00:00:00'), 'EEEE, MMMM d yyyy')
 
   return (
-    <div className="fixed inset-0 z-50 flex justify-end" onClick={onClose}>
+    <div className="fixed inset-0 z-50 flex justify-end rtl:justify-start" onClick={onClose}>
       <div
         className="bg-white w-full max-w-sm h-full shadow-2xl p-6 overflow-y-auto"
         onClick={(e) => e.stopPropagation()}

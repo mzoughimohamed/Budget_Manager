@@ -25,11 +25,11 @@ export default function TransactionTable({ transactions, onEdit, month, cycleSta
         <table className="w-full text-sm">
           <thead className="bg-gray-50 text-gray-500 text-xs uppercase">
             <tr>
-              <th className="px-4 py-3 text-left">{t('common_date')}</th>
-              <th className="px-4 py-3 text-left">{t('common_type')}</th>
-              <th className="px-4 py-3 text-left">{t('common_category')}</th>
-              <th className="px-4 py-3 text-right">{t('common_amount')}</th>
-              <th className="px-4 py-3 text-left">{t('common_note')}</th>
+              <th className="px-4 py-3 text-left rtl:text-right">{t('common_date')}</th>
+              <th className="px-4 py-3 text-left rtl:text-right">{t('common_type')}</th>
+              <th className="px-4 py-3 text-left rtl:text-right">{t('common_category')}</th>
+              <th className="px-4 py-3 text-right rtl:text-left">{t('common_amount')}</th>
+              <th className="px-4 py-3 text-left rtl:text-right">{t('common_note')}</th>
               <th className="px-4 py-3" />
             </tr>
           </thead>

@@ -52,7 +52,7 @@ export default function TransactionForm({ categories, onClose, initialDate, init
           <button onClick={onClose} className="text-gray-400 hover:text-gray-600"><X size={20} /></button>
         </div>
         <div className="space-y-4">
-          <div className="flex gap-2">
+          <div className="flex gap-2 rtl:flex-row-reverse">
             {['expense', 'income'].map((type) => (
               <button
                 key={type}

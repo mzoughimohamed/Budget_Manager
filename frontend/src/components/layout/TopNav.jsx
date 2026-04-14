@@ -31,7 +31,7 @@ export default function TopNav() {
           <Wallet size={20} />
           Budget
         </div>
-        <div className="hidden md:flex gap-1">
+        <div className="hidden md:flex gap-1 rtl:flex-row-reverse">
           {TABS.map(({ to, labelKey }) => (
             <NavLink
               key={to}
