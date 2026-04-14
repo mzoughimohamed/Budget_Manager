@@ -11,7 +11,7 @@ class TransactionViewSet(viewsets.ModelViewSet):
         qs = Transaction.objects.all()
         if month:
             year, mon = month.split('-')
-            qs = qs.filter(date__year=year, date__month=mon)
+            qs = qs.filter(date__year=int(year), date__month=int(mon))
         return qs
 
 
@@ -23,5 +23,5 @@ class IncomeSourceViewSet(viewsets.ModelViewSet):
         qs = IncomeSource.objects.all()
         if month:
             year, mon = month.split('-')
-            qs = qs.filter(month__year=year, month__month=mon)
+            qs = qs.filter(month__year=int(year), month__month=int(mon))
         return qs
