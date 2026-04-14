@@ -4,12 +4,15 @@ import { format } from 'date-fns'
 import { useQuery } from '@tanstack/react-query'
 import { getIncomeSources } from '../api/incomeSources'
 import { getCategories } from '../api/categories'
+import { useCycleSettings } from '../hooks/useCycleSettings'
 import MonthPicker from '../components/planning/MonthPicker'
 import IncomeSourcesTable from '../components/planning/IncomeSourcesTable'
 import CategoryBudgetTable from '../components/planning/CategoryBudgetTable'
 
 export default function PlanningPage() {
   const [month, setMonth] = useState(format(new Date(), 'yyyy-MM'))
+  const { cycleRange } = useCycleSettings()
+  const { label } = cycleRange(month)
 
   const { data: incomeSources = [] } = useQuery({
     queryKey: ['incomeSources', month],
@@ -25,7 +28,7 @@ export default function PlanningPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <h2 className="text-xl font-bold text-gray-800">Planning</h2>
-        <MonthPicker value={month} onChange={setMonth} />
+        <MonthPicker value={month} onChange={setMonth} cycleLabel={label} />
       </div>
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <IncomeSourcesTable incomeSources={incomeSources} month={month} />

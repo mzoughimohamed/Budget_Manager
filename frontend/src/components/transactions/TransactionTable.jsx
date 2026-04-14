@@ -4,13 +4,13 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { deleteTransaction } from '../../api/transactions'
 import { format } from 'date-fns'
 
-export default function TransactionTable({ transactions, onEdit, month }) {
+export default function TransactionTable({ transactions, onEdit, month, cycleStartDay }) {
   const qc = useQueryClient()
   const deleteMutation = useMutation({
     mutationFn: deleteTransaction,
     onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ['transactions', month] })
-      qc.invalidateQueries({ queryKey: ['summary', month] })
+      qc.invalidateQueries({ queryKey: ['transactions', month, cycleStartDay] })
+      qc.invalidateQueries({ queryKey: ['summary', month, cycleStartDay] })
     },
   })
 

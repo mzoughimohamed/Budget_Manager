@@ -5,7 +5,7 @@ import { format } from 'date-fns'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { createTransaction, updateTransaction } from '../../api/transactions'
 
-export default function TransactionForm({ categories, onClose, initialDate, initialData, month }) {
+export default function TransactionForm({ categories, onClose, initialDate, initialData, month, cycleStartDay }) {
   const qc = useQueryClient()
   const [form, setForm] = useState({
     amount: '',
@@ -28,8 +28,8 @@ export default function TransactionForm({ categories, onClose, initialDate, init
   }, [initialData])
 
   const invalidate = () => {
-    qc.invalidateQueries({ queryKey: ['transactions', month] })
-    qc.invalidateQueries({ queryKey: ['summary', month] })
+    qc.invalidateQueries({ queryKey: ['transactions', month, cycleStartDay] })
+    qc.invalidateQueries({ queryKey: ['summary', month, cycleStartDay] })
   }
 
   const saveMutation = useMutation({

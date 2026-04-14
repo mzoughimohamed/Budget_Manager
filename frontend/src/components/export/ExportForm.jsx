@@ -3,23 +3,26 @@ import { useState } from 'react'
 import { format } from 'date-fns'
 import { FileText, Table2 } from 'lucide-react'
 import client from '../../api/client'
+import { useCycleSettings } from '../../hooks/useCycleSettings'
 
 export default function ExportForm() {
   const [month, setMonth] = useState(format(new Date(), 'yyyy-MM'))
   const [loading, setLoading] = useState(null)
+  const { cycleRange } = useCycleSettings()
 
   const handleExport = async (formatType) => {
     setLoading(formatType)
+    const { start, end } = cycleRange(month)
     try {
       const response = await client.get(`/api/export/${formatType}/`, {
-        params: { month },
+        params: { start, end },
         responseType: 'blob',
       })
       const ext = formatType === 'csv' ? 'csv' : 'pdf'
       const url = URL.createObjectURL(response.data)
       const a = document.createElement('a')
       a.href = url
-      a.download = `budget-${month}.${ext}`
+      a.download = `budget-${start}.${ext}`
       a.click()
       URL.revokeObjectURL(url)
     } finally {
