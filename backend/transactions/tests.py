@@ -80,3 +80,25 @@ def test_summary(auth_client, category):
     assert response.data['net_savings'] == '2650.00'
     assert len(response.data['by_category']) == 1
     assert response.data['by_category'][0]['spent'] == '350.00'
+
+
+@pytest.mark.django_db
+def test_export_csv(auth_client, category):
+    from datetime import date
+    Transaction.objects.create(amount=150, type='expense', category=category, date=date(2026, 4, 5), note='Groceries')
+    response = auth_client.get('/api/export/csv/?month=2026-04')
+    assert response.status_code == 200
+    assert response['Content-Type'] == 'text/csv'
+    content = response.content.decode()
+    assert 'Food' in content
+    assert '150' in content
+
+
+@pytest.mark.django_db
+def test_export_pdf(auth_client, category):
+    from datetime import date
+    Transaction.objects.create(amount=150, type='expense', category=category, date=date(2026, 4, 5))
+    response = auth_client.get('/api/export/pdf/?month=2026-04')
+    assert response.status_code == 200
+    assert response['Content-Type'] == 'application/pdf'
+    assert response.content[:4] == b'%PDF'
