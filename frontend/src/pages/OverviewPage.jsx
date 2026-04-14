@@ -1,10 +1,10 @@
-// frontend/src/pages/OverviewPage.jsx
 import { useState } from 'react'
 import { format } from 'date-fns'
 import { useQuery } from '@tanstack/react-query'
 import { getSummary } from '../api/summary'
 import { getTransactions } from '../api/transactions'
 import { useCycleSettings } from '../hooks/useCycleSettings'
+import { useTranslation } from '../contexts/LanguageContext'
 import MonthPicker from '../components/planning/MonthPicker'
 import StatsRow from '../components/overview/StatsRow'
 import BudgetDonutChart from '../components/overview/BudgetDonutChart'
@@ -16,6 +16,7 @@ export default function OverviewPage() {
   const [month, setMonth] = useState(format(new Date(), 'yyyy-MM'))
   const { cycleStartDay, cycleRange } = useCycleSettings()
   const { start, end, label } = cycleRange(month)
+  const { t } = useTranslation()
 
   const { data: summary } = useQuery({
     queryKey: ['summary', month, cycleStartDay],
@@ -28,13 +29,13 @@ export default function OverviewPage() {
   })
 
   if (!summary) {
-    return <div className="flex justify-center py-20 text-gray-400">Loading…</div>
+    return <div className="flex justify-center py-20 text-gray-400">{t('common_loading')}</div>
   }
 
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h2 className="text-xl font-bold text-gray-800">Overview</h2>
+        <h2 className="text-xl font-bold text-gray-800">{t('overview_title')}</h2>
         <MonthPicker value={month} onChange={setMonth} cycleLabel={label} />
       </div>
 

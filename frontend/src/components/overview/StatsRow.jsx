@@ -1,5 +1,5 @@
-// frontend/src/components/overview/StatsRow.jsx
 import { TrendingUp, TrendingDown, PiggyBank } from 'lucide-react'
+import { useTranslation } from '../../contexts/LanguageContext'
 
 function StatCard({ label, value, icon: Icon, color }) {
   return (
@@ -16,26 +16,12 @@ function StatCard({ label, value, icon: Icon, color }) {
 }
 
 export default function StatsRow({ totalIncome, totalExpenses, netSavings }) {
+  const { t } = useTranslation()
   return (
     <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-      <StatCard
-        label="Income"
-        value={Number(totalIncome).toLocaleString('fr-TN')}
-        icon={TrendingUp}
-        color="bg-app-success"
-      />
-      <StatCard
-        label="Expenses"
-        value={Number(totalExpenses).toLocaleString('fr-TN')}
-        icon={TrendingDown}
-        color="bg-app-danger"
-      />
-      <StatCard
-        label="Net Savings"
-        value={Number(netSavings).toLocaleString('fr-TN')}
-        icon={PiggyBank}
-        color="bg-app-accent"
-      />
+      <StatCard label={t('stats_income')}   value={Number(totalIncome).toLocaleString('fr-TN')}   icon={TrendingUp}  color="bg-app-success" />
+      <StatCard label={t('stats_expenses')} value={Number(totalExpenses).toLocaleString('fr-TN')} icon={TrendingDown} color="bg-app-danger" />
+      <StatCard label={t('stats_savings')}  value={Number(netSavings).toLocaleString('fr-TN')}    icon={PiggyBank}   color="bg-app-accent" />
     </div>
   )
 }

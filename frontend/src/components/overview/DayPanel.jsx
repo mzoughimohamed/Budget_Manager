@@ -1,8 +1,9 @@
-// frontend/src/components/overview/DayPanel.jsx
 import { X, Plus } from 'lucide-react'
 import { format } from 'date-fns'
+import { useTranslation } from '../../contexts/LanguageContext'
 
 export default function DayPanel({ date, transactions, onClose, onAddTransaction }) {
+  const { t } = useTranslation()
   const dayTransactions = transactions.filter((tx) => tx.date === date)
   const formattedDate = format(new Date(date + 'T00:00:00'), 'EEEE, MMMM d yyyy')
 
@@ -20,7 +21,7 @@ export default function DayPanel({ date, transactions, onClose, onAddTransaction
         </div>
         <div className="space-y-3 mb-6">
           {dayTransactions.length === 0 ? (
-            <p className="text-sm text-gray-400">No transactions on this day</p>
+            <p className="text-sm text-gray-400">{t('day_panel_no_transactions')}</p>
           ) : (
             dayTransactions.map((tx) => (
               <div key={tx.id} className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
@@ -42,7 +43,7 @@ export default function DayPanel({ date, transactions, onClose, onAddTransaction
           className="w-full flex items-center justify-center gap-2 bg-app-accent text-white py-2.5 rounded-xl font-medium hover:bg-blue-600 transition-colors"
         >
           <Plus size={18} />
-          Add Transaction
+          {t('day_panel_add')}
         </button>
       </div>
     </div>

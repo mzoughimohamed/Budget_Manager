@@ -1,10 +1,12 @@
-// frontend/src/components/overview/CategorySidebar.jsx
+import { useTranslation } from '../../contexts/LanguageContext'
+
 export default function CategorySidebar({ byCategory }) {
+  const { t } = useTranslation()
   const active = byCategory.filter((item) => Number(item.limit) > 0 || Number(item.spent) > 0)
 
   return (
     <div className="bg-white rounded-2xl p-5 shadow-sm">
-      <h3 className="font-semibold text-gray-700 mb-4">Categories</h3>
+      <h3 className="font-semibold text-gray-700 mb-4">{t('overview_categories')}</h3>
       <div className="space-y-4">
         {active.map(({ category, spent, limit, over_budget }) => {
           const spentNum = Number(spent)
@@ -31,7 +33,7 @@ export default function CategorySidebar({ byCategory }) {
           )
         })}
         {active.length === 0 && (
-          <p className="text-sm text-gray-400">No categories with activity</p>
+          <p className="text-sm text-gray-400">{t('overview_no_activity')}</p>
         )}
       </div>
     </div>
