@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { Wallet } from 'lucide-react'
 import { login } from '../api/auth'
 import { useAuth } from '../contexts/AuthContext'
+import { useTranslation } from '../contexts/LanguageContext'
 
 export default function LoginPage() {
   const [username, setUsername] = useState('')
@@ -10,6 +11,7 @@ export default function LoginPage() {
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
   const { setUser } = useAuth()
+  const { t } = useTranslation()
   const navigate = useNavigate()
 
   const handleSubmit = async (e) => {
@@ -21,7 +23,7 @@ export default function LoginPage() {
       setUser(res.data.username)
       navigate('/')
     } catch {
-      setError('Invalid username or password')
+      setError(t('login_error'))
     } finally {
       setLoading(false)
     }
@@ -34,13 +36,13 @@ export default function LoginPage() {
           <div className="bg-app-accent rounded-full p-3 mb-3">
             <Wallet size={28} className="text-white" />
           </div>
-          <h1 className="text-2xl font-bold text-gray-800">Budget</h1>
-          <p className="text-gray-500 text-sm mt-1">Sign in to your account</p>
+          <h1 className="text-2xl font-bold text-gray-800">{t('login_title')}</h1>
+          <p className="text-gray-500 text-sm mt-1">{t('login_subtitle')}</p>
         </div>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Username
+              {t('login_username')}
             </label>
             <input
               type="text"
@@ -52,7 +54,7 @@ export default function LoginPage() {
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Password
+              {t('login_password')}
             </label>
             <input
               type="password"
@@ -70,7 +72,7 @@ export default function LoginPage() {
             disabled={loading}
             className="w-full bg-app-accent text-white py-2 rounded-lg font-medium hover:bg-blue-600 transition-colors disabled:opacity-60"
           >
-            {loading ? 'Signing in…' : 'Sign In'}
+            {loading ? t('login_submitting') : t('login_submit')}
           </button>
         </form>
       </div>

@@ -5,6 +5,8 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import * as LucideIcons from 'lucide-react'
 import { getSettings, updateSettings } from '../api/settings'
 import { getCategories, createCategory, updateCategory, deleteCategory } from '../api/categories'
+import { useTranslation } from '../contexts/LanguageContext'
+import LangSwitcher from '../components/layout/LangSwitcher'
 
 const ICON_OPTIONS = [
   'utensils', 'car', 'home', 'zap', 'droplets', 'wifi', 'heart-pulse',
@@ -18,19 +20,16 @@ function getIcon(iconName) {
   return LucideIcons[pascal] || LucideIcons.CircleDot
 }
 
-function CategoryRow({ cat, onEdit, onDelete }) {
+function CategoryRow({ cat, onEdit, onDelete, t }) {
   const Icon = getIcon(cat.icon)
   return (
     <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
-      <div
-        className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0"
-        style={{ backgroundColor: cat.color + '22' }}
-      >
+      <div className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0" style={{ backgroundColor: cat.color + '22' }}>
         <Icon size={16} style={{ color: cat.color }} />
       </div>
       <span className="flex-1 text-sm font-medium text-gray-700">{cat.name}</span>
       {cat.is_preset && (
-        <span className="text-xs text-gray-400 bg-gray-200 px-2 py-0.5 rounded-full">preset</span>
+        <span className="text-xs text-gray-400 bg-gray-200 px-2 py-0.5 rounded-full">{t('common_preset')}</span>
       )}
       <button onClick={() => onEdit(cat)} className="text-gray-400 hover:text-gray-700">
         <Pencil size={15} />
@@ -44,7 +43,7 @@ function CategoryRow({ cat, onEdit, onDelete }) {
   )
 }
 
-function CategoryForm({ initial, onSave, onCancel }) {
+function CategoryForm({ initial, onSave, onCancel, t }) {
   const [name, setName] = useState(initial?.name || '')
   const [icon, setIcon] = useState(initial?.icon || 'circle-dot')
   const [color, setColor] = useState(initial?.color || '#6B7280')
@@ -54,7 +53,7 @@ function CategoryForm({ initial, onSave, onCancel }) {
     <div className="p-3 bg-blue-50 rounded-lg space-y-3">
       <input
         type="text"
-        placeholder="Category name"
+        placeholder={t('settings_category_name')}
         value={name}
         onChange={(e) => setName(e.target.value)}
         className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-app-accent"
@@ -62,7 +61,7 @@ function CategoryForm({ initial, onSave, onCancel }) {
       />
       <div className="flex gap-2 items-center">
         <div className="flex-1">
-          <label className="block text-xs text-gray-500 mb-1">Icon</label>
+          <label className="block text-xs text-gray-500 mb-1">{t('settings_icon')}</label>
           <select
             value={icon}
             onChange={(e) => setIcon(e.target.value)}
@@ -74,19 +73,11 @@ function CategoryForm({ initial, onSave, onCancel }) {
           </select>
         </div>
         <div>
-          <label className="block text-xs text-gray-500 mb-1">Color</label>
-          <input
-            type="color"
-            value={color}
-            onChange={(e) => setColor(e.target.value)}
-            className="h-9 w-14 border rounded-lg cursor-pointer"
-          />
+          <label className="block text-xs text-gray-500 mb-1">{t('settings_color')}</label>
+          <input type="color" value={color} onChange={(e) => setColor(e.target.value)} className="h-9 w-14 border rounded-lg cursor-pointer" />
         </div>
         <div className="flex-shrink-0 mt-4">
-          <div
-            className="w-9 h-9 rounded-full flex items-center justify-center"
-            style={{ backgroundColor: color + '33' }}
-          >
+          <div className="w-9 h-9 rounded-full flex items-center justify-center" style={{ backgroundColor: color + '33' }}>
             <PreviewIcon size={18} style={{ color }} />
           </div>
         </div>
@@ -97,20 +88,17 @@ function CategoryForm({ initial, onSave, onCancel }) {
           disabled={!name.trim()}
           className="flex items-center gap-1.5 bg-app-accent text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-600 disabled:opacity-50"
         >
-          <Check size={14} /> Save
+          <Check size={14} /> {t('common_save')}
         </button>
-        <button
-          onClick={onCancel}
-          className="flex items-center gap-1.5 border px-4 py-2 rounded-lg text-sm text-gray-600 hover:bg-gray-50"
-        >
-          <X size={14} /> Cancel
+        <button onClick={onCancel} className="flex items-center gap-1.5 border px-4 py-2 rounded-lg text-sm text-gray-600 hover:bg-gray-50">
+          <X size={14} /> {t('common_cancel')}
         </button>
       </div>
     </div>
   )
 }
 
-function CategoriesCard() {
+function CategoriesCard({ t }) {
   const qc = useQueryClient()
   const [editingId, setEditingId] = useState(null)
   const [adding, setAdding] = useState(false)
@@ -139,7 +127,7 @@ function CategoriesCard() {
 
   return (
     <div className="bg-white rounded-2xl p-6 shadow-sm max-w-md">
-      <h3 className="font-semibold text-gray-700 mb-5">Categories</h3>
+      <h3 className="font-semibold text-gray-700 mb-5">{t('settings_categories_title')}</h3>
       <div className="space-y-2">
         {categories.map((cat) =>
           editingId === cat.id ? (
@@ -148,6 +136,7 @@ function CategoriesCard() {
               initial={cat}
               onSave={(data) => updateMutation.mutate({ id: cat.id, data })}
               onCancel={() => setEditingId(null)}
+              t={t}
             />
           ) : (
             <CategoryRow
@@ -155,21 +144,22 @@ function CategoriesCard() {
               cat={cat}
               onEdit={(c) => { setAdding(false); setEditingId(c.id) }}
               onDelete={(id) => deleteMutation.mutate(id)}
+              t={t}
             />
           )
         )}
-
         {adding ? (
           <CategoryForm
             onSave={(data) => createMutation.mutate(data)}
             onCancel={() => setAdding(false)}
+            t={t}
           />
         ) : (
           <button
             onClick={() => { setEditingId(null); setAdding(true) }}
             className="flex items-center gap-2 w-full p-3 border-2 border-dashed border-gray-200 rounded-lg text-sm text-gray-400 hover:border-app-accent hover:text-app-accent transition-colors"
           >
-            <Plus size={16} /> Add category
+            <Plus size={16} /> {t('settings_add_category')}
           </button>
         )}
       </div>
@@ -179,6 +169,7 @@ function CategoriesCard() {
 
 export default function SettingsPage() {
   const qc = useQueryClient()
+  const { t } = useTranslation()
   const { data } = useQuery({
     queryKey: ['settings'],
     queryFn: () => getSettings().then((r) => r.data),
@@ -192,9 +183,7 @@ export default function SettingsPage() {
 
   const saveMutation = useMutation({
     mutationFn: () => updateSettings({ cycle_start_day: Number(day) }),
-    onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ['settings'] })
-    },
+    onSuccess: () => { qc.invalidateQueries({ queryKey: ['settings'] }) },
   })
 
   const dayNum = Number(day)
@@ -210,47 +199,43 @@ export default function SettingsPage() {
 
   return (
     <div className="space-y-6">
-      <h2 className="text-xl font-bold text-gray-800">Settings</h2>
+      <h2 className="text-xl font-bold text-gray-800">{t('settings_title')}</h2>
 
       <div className="bg-white rounded-2xl p-6 shadow-sm max-w-md">
-        <h3 className="font-semibold text-gray-700 mb-5">Budget Cycle</h3>
+        <h3 className="font-semibold text-gray-700 mb-5">{t('settings_language_title')}</h3>
+        <LangSwitcher />
+      </div>
+
+      <div className="bg-white rounded-2xl p-6 shadow-sm max-w-md">
+        <h3 className="font-semibold text-gray-700 mb-5">{t('settings_cycle_title')}</h3>
         <div className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-gray-600 mb-1">
-              Cycle starts on day
+              {t('settings_cycle_label')}
             </label>
             <input
               type="number"
               min="1"
               max="28"
               value={day}
-              onChange={(e) => {
-                saveMutation.reset()
-                setDay(e.target.value)
-              }}
+              onChange={(e) => { saveMutation.reset(); setDay(e.target.value) }}
               className="w-24 border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-app-accent"
             />
-            {preview && (
-              <p className="text-xs text-gray-400 mt-1">{preview}</p>
-            )}
+            {preview && <p className="text-xs text-gray-400 mt-1">{preview}</p>}
           </div>
           <button
             onClick={() => saveMutation.mutate()}
             disabled={!day || dayNum < 1 || dayNum > 28 || saveMutation.isPending}
             className="bg-app-accent text-white px-6 py-2 rounded-xl text-sm font-medium hover:bg-blue-600 disabled:opacity-50 transition-colors"
           >
-            {saveMutation.isPending ? 'Saving…' : 'Save'}
+            {saveMutation.isPending ? t('common_saving') : t('common_save')}
           </button>
-          {saveMutation.isSuccess && (
-            <p className="text-sm text-app-success">Settings saved.</p>
-          )}
-          {saveMutation.isError && (
-            <p className="text-sm text-app-danger">Failed to save. Please try again.</p>
-          )}
+          {saveMutation.isSuccess && <p className="text-sm text-app-success">{t('settings_saved')}</p>}
+          {saveMutation.isError && <p className="text-sm text-app-danger">{t('settings_save_error')}</p>}
         </div>
       </div>
 
-      <CategoriesCard />
+      <CategoriesCard t={t} />
     </div>
   )
 }

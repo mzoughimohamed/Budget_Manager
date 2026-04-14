@@ -1,14 +1,15 @@
-// frontend/src/components/export/ExportForm.jsx
 import { useState } from 'react'
 import { format } from 'date-fns'
 import { FileText, Table2 } from 'lucide-react'
 import client from '../../api/client'
 import { useCycleSettings } from '../../hooks/useCycleSettings'
+import { useTranslation } from '../../contexts/LanguageContext'
 
 export default function ExportForm() {
   const [month, setMonth] = useState(format(new Date(), 'yyyy-MM'))
   const [loading, setLoading] = useState(null)
   const { cycleRange } = useCycleSettings()
+  const { t } = useTranslation()
 
   const handleExport = async (formatType) => {
     setLoading(formatType)
@@ -32,10 +33,10 @@ export default function ExportForm() {
 
   return (
     <div className="bg-white rounded-2xl p-6 shadow-sm max-w-md">
-      <h3 className="font-semibold text-gray-700 mb-5">Export Monthly Report</h3>
+      <h3 className="font-semibold text-gray-700 mb-5">{t('export_card_title')}</h3>
       <div className="space-y-4">
         <div>
-          <label className="block text-sm font-medium text-gray-600 mb-1">Month</label>
+          <label className="block text-sm font-medium text-gray-600 mb-1">{t('export_month')}</label>
           <input
             type="month"
             value={month}
@@ -49,14 +50,14 @@ export default function ExportForm() {
             disabled={!!loading}
             className="flex items-center justify-center gap-2 border-2 border-app-accent text-app-accent py-3 rounded-xl font-medium hover:bg-blue-50 transition-colors disabled:opacity-50"
           >
-            {loading === 'csv' ? 'Generating…' : <><Table2 size={18} /> CSV</>}
+            {loading === 'csv' ? t('export_generating') : <><Table2 size={18} /> CSV</>}
           </button>
           <button
             onClick={() => handleExport('pdf')}
             disabled={!!loading}
             className="flex items-center justify-center gap-2 bg-app-accent text-white py-3 rounded-xl font-medium hover:bg-blue-600 transition-colors disabled:opacity-50"
           >
-            {loading === 'pdf' ? 'Generating…' : <><FileText size={18} /> PDF</>}
+            {loading === 'pdf' ? t('export_generating') : <><FileText size={18} /> PDF</>}
           </button>
         </div>
       </div>
