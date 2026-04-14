@@ -1,5 +1,5 @@
 import { NavLink, useNavigate } from 'react-router-dom'
-import { LogOut, Wallet } from 'lucide-react'
+import { LogOut, Wallet, Settings } from 'lucide-react'
 import { useAuth } from '../../contexts/AuthContext'
 import { logout } from '../../api/auth'
 
@@ -8,6 +8,7 @@ const tabs = [
   { to: '/planning',     label: 'Planning' },
   { to: '/transactions', label: 'Transactions' },
   { to: '/export',       label: 'Export' },
+  { to: '/settings',     label: 'Settings' },
 ]
 
 export default function TopNav() {

@@ -9,6 +9,7 @@ import OverviewPage from './pages/OverviewPage'
 import PlanningPage from './pages/PlanningPage'
 import TransactionsPage from './pages/TransactionsPage'
 import ExportPage from './pages/ExportPage'
+import SettingsPage from './pages/SettingsPage'
 
 const queryClient = new QueryClient()
 
@@ -34,6 +35,7 @@ export default function App() {
               <Route element={<Layout><PlanningPage /></Layout>}     path="/planning" />
               <Route element={<Layout><TransactionsPage /></Layout>} path="/transactions" />
               <Route element={<Layout><ExportPage /></Layout>}       path="/export" />
+              <Route element={<Layout><SettingsPage /></Layout>}     path="/settings" />
             </Route>
           </Routes>
         </BrowserRouter>

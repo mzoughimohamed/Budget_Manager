@@ -1,11 +1,12 @@
 import { NavLink } from 'react-router-dom'
-import { LayoutDashboard, CalendarDays, List, Download } from 'lucide-react'
+import { LayoutDashboard, CalendarDays, List, Download, Settings } from 'lucide-react'
 
 const tabs = [
   { to: '/',             label: 'Overview',     icon: LayoutDashboard },
   { to: '/planning',     label: 'Planning',     icon: CalendarDays },
   { to: '/transactions', label: 'Transactions', icon: List },
   { to: '/export',       label: 'Export',       icon: Download },
+  { to: '/settings',     label: 'Settings',     icon: Settings },
 ]
 
 export default function MobileBottomNav() {
