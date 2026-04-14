@@ -1,4 +1,4 @@
 import client from './client'
 
-export const getSummary = (month) =>
-  client.get('/api/summary/', { params: { month } })
+export const getSummary = ({ start, end, month }) =>
+  client.get('/api/summary/', { params: { start, end, month } })
