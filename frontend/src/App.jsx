@@ -1,6 +1,8 @@
+import { useEffect } from 'react'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { AuthProvider } from './contexts/AuthContext'
+import { useTranslation } from './contexts/LanguageContext'
 import ProtectedRoute from './components/layout/ProtectedRoute'
 import TopNav from './components/layout/TopNav'
 import MobileBottomNav from './components/layout/MobileBottomNav'
@@ -24,6 +26,13 @@ function Layout({ children }) {
 }
 
 export default function App() {
+  const { lang } = useTranslation()
+
+  useEffect(() => {
+    document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr'
+    document.documentElement.lang = lang
+  }, [lang])
+
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>

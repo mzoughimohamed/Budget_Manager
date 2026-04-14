@@ -1,18 +1,21 @@
 import { NavLink, useNavigate } from 'react-router-dom'
 import { LogOut, Wallet } from 'lucide-react'
 import { useAuth } from '../../contexts/AuthContext'
+import { useTranslation } from '../../contexts/LanguageContext'
 import { logout } from '../../api/auth'
+import LangSwitcher from './LangSwitcher'
 
-const tabs = [
-  { to: '/',             label: 'Overview' },
-  { to: '/planning',     label: 'Planning' },
-  { to: '/transactions', label: 'Transactions' },
-  { to: '/export',       label: 'Export' },
-  { to: '/settings',     label: 'Settings' },
+const TABS = [
+  { to: '/',             labelKey: 'nav_overview' },
+  { to: '/planning',     labelKey: 'nav_planning' },
+  { to: '/transactions', labelKey: 'nav_transactions' },
+  { to: '/export',       labelKey: 'nav_export' },
+  { to: '/settings',     labelKey: 'nav_settings' },
 ]
 
 export default function TopNav() {
   const { setUser } = useAuth()
+  const { t } = useTranslation()
   const navigate = useNavigate()
 
   const handleLogout = async () => {
@@ -29,7 +32,7 @@ export default function TopNav() {
           Budget
         </div>
         <div className="hidden md:flex gap-1">
-          {tabs.map(({ to, label }) => (
+          {TABS.map(({ to, labelKey }) => (
             <NavLink
               key={to}
               to={to}
@@ -42,17 +45,20 @@ export default function TopNav() {
                 }`
               }
             >
-              {label}
+              {t(labelKey)}
             </NavLink>
           ))}
         </div>
-        <button
-          onClick={handleLogout}
-          className="flex items-center gap-1 text-sm text-gray-500 hover:text-red-500 transition-colors"
-        >
-          <LogOut size={16} />
-          <span className="hidden sm:inline">Logout</span>
-        </button>
+        <div className="flex items-center gap-3">
+          <LangSwitcher />
+          <button
+            onClick={handleLogout}
+            className="flex items-center gap-1 text-sm text-gray-500 hover:text-red-500 transition-colors"
+          >
+            <LogOut size={16} />
+            <span className="hidden sm:inline">{t('nav_logout')}</span>
+          </button>
+        </div>
       </div>
     </nav>
   )

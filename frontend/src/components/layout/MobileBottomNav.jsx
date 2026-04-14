@@ -1,19 +1,21 @@
 import { NavLink } from 'react-router-dom'
 import { LayoutDashboard, CalendarDays, List, Download, Settings } from 'lucide-react'
+import { useTranslation } from '../../contexts/LanguageContext'
 
-const tabs = [
-  { to: '/',             label: 'Overview',     icon: LayoutDashboard },
-  { to: '/planning',     label: 'Planning',     icon: CalendarDays },
-  { to: '/transactions', label: 'Transactions', icon: List },
-  { to: '/export',       label: 'Export',       icon: Download },
-  { to: '/settings',     label: 'Settings',     icon: Settings },
+const TABS = [
+  { to: '/',             labelKey: 'nav_overview',     icon: LayoutDashboard },
+  { to: '/planning',     labelKey: 'nav_planning',     icon: CalendarDays },
+  { to: '/transactions', labelKey: 'nav_transactions', icon: List },
+  { to: '/export',       labelKey: 'nav_export',       icon: Download },
+  { to: '/settings',     labelKey: 'nav_settings',     icon: Settings },
 ]
 
 export default function MobileBottomNav() {
+  const { t } = useTranslation()
   return (
     <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-50">
       <div className="flex">
-        {tabs.map(({ to, label, icon: Icon }) => (
+        {TABS.map(({ to, labelKey, icon: Icon }) => (
           <NavLink
             key={to}
             to={to}
@@ -25,7 +27,7 @@ export default function MobileBottomNav() {
             }
           >
             <Icon size={20} />
-            {label}
+            {t(labelKey)}
           </NavLink>
         ))}
       </div>
