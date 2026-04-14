@@ -65,3 +65,18 @@ def test_list_income_sources_by_month(auth_client):
     response = auth_client.get('/api/income-sources/?month=2026-04')
     assert response.status_code == 200
     assert len(response.data) == 1
+
+
+@pytest.mark.django_db
+def test_summary(auth_client, category):
+    from datetime import date
+    IncomeSource.objects.create(name='Salary', amount=3000, month=date(2026, 4, 1))
+    Transaction.objects.create(amount=150, type='expense', category=category, date=date(2026, 4, 5))
+    Transaction.objects.create(amount=200, type='expense', category=category, date=date(2026, 4, 10))
+    response = auth_client.get('/api/summary/?month=2026-04')
+    assert response.status_code == 200
+    assert response.data['total_income'] == '3000.00'
+    assert response.data['total_expenses'] == '350.00'
+    assert response.data['net_savings'] == '2650.00'
+    assert len(response.data['by_category']) == 1
+    assert response.data['by_category'][0]['spent'] == '350.00'
