@@ -1,13 +1,12 @@
-// frontend/src/components/planning/IncomeSourcesTable.jsx
 import { useState } from 'react'
 import { Plus, Trash2, Check, X } from 'lucide-react'
 import { useQueryClient, useMutation } from '@tanstack/react-query'
-import {
-  createIncomeSource, updateIncomeSource, deleteIncomeSource
-} from '../../api/incomeSources'
+import { createIncomeSource, updateIncomeSource, deleteIncomeSource } from '../../api/incomeSources'
+import { useTranslation } from '../../contexts/LanguageContext'
 
 export default function IncomeSourcesTable({ incomeSources, month }) {
   const qc = useQueryClient()
+  const { t } = useTranslation()
   const [newName, setNewName] = useState('')
   const [newAmount, setNewAmount] = useState('')
   const [editId, setEditId] = useState(null)
@@ -32,7 +31,7 @@ export default function IncomeSourcesTable({ incomeSources, month }) {
 
   return (
     <div className="bg-white rounded-2xl p-5 shadow-sm">
-      <h3 className="font-semibold text-gray-700 mb-4">Income Sources</h3>
+      <h3 className="font-semibold text-gray-700 mb-4">{t('planning_income_sources')}</h3>
       <div className="space-y-2 mb-4">
         {incomeSources.map((src) => (
           <div key={src.id} className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
@@ -67,14 +66,14 @@ export default function IncomeSourcesTable({ incomeSources, month }) {
       <div className="flex gap-2">
         <input
           type="text"
-          placeholder="Source name"
+          placeholder={t('planning_source_name')}
           value={newName}
           onChange={(e) => setNewName(e.target.value)}
           className="flex-1 border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-app-accent"
         />
         <input
           type="number"
-          placeholder="Amount"
+          placeholder={t('common_amount')}
           value={newAmount}
           onChange={(e) => setNewAmount(e.target.value)}
           className="w-28 border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-app-accent"

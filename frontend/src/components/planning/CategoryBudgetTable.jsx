@@ -1,8 +1,8 @@
-// frontend/src/components/planning/CategoryBudgetTable.jsx
 import { useState } from 'react'
 import { Check, X } from 'lucide-react'
 import { useQueryClient, useMutation } from '@tanstack/react-query'
 import { updateCategory } from '../../api/categories'
+import { useTranslation } from '../../contexts/LanguageContext'
 import * as LucideIcons from 'lucide-react'
 
 function getIcon(iconName) {
@@ -12,6 +12,7 @@ function getIcon(iconName) {
 
 export default function CategoryBudgetTable({ categories }) {
   const qc = useQueryClient()
+  const { t } = useTranslation()
   const [editId, setEditId] = useState(null)
   const [editLimit, setEditLimit] = useState('')
 
@@ -25,8 +26,8 @@ export default function CategoryBudgetTable({ categories }) {
 
   return (
     <div className="bg-white rounded-2xl p-5 shadow-sm">
-      <h3 className="font-semibold text-gray-700 mb-1">Category Budget Limits</h3>
-      <p className="text-xs text-gray-400 mb-4">Limits apply to every month</p>
+      <h3 className="font-semibold text-gray-700 mb-1">{t('planning_budget_limits')}</h3>
+      <p className="text-xs text-gray-400 mb-4">{t('planning_limits_note')}</p>
       <div className="space-y-2">
         {categories.map((cat) => {
           const Icon = getIcon(cat.icon)
@@ -55,7 +56,7 @@ export default function CategoryBudgetTable({ categories }) {
                 >
                   {Number(cat.budget_limit) > 0
                     ? `${Number(cat.budget_limit).toLocaleString('fr-TN')} TND`
-                    : 'Set limit'}
+                    : t('common_set_limit')}
                 </button>
               )}
             </div>
