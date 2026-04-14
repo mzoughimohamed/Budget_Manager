@@ -9,6 +9,8 @@ from rest_framework.response import Response
 def login_view(request):
     username = request.data.get('username')
     password = request.data.get('password')
+    if not username or not password:
+        return Response({'error': 'username and password are required'}, status=400)
     user = authenticate(request, username=username, password=password)
     if user is None:
         return Response({'error': 'Invalid credentials'}, status=400)

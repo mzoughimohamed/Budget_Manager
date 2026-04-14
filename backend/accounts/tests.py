@@ -1,6 +1,5 @@
 import pytest
 from django.contrib.auth.models import User
-from django.urls import reverse
 from rest_framework.test import APIClient
 
 
@@ -11,7 +10,7 @@ def client():
 
 @pytest.fixture
 def user(db):
-    return User.objects.create_superuser(
+    return User.objects.create_user(
         username='testuser', password='testpass123'
     )
 
@@ -43,6 +42,9 @@ def test_me_authenticated(client, user):
 
 @pytest.mark.django_db
 def test_me_unauthenticated(client):
+    # DRF returns 403 (not 401) for anonymous requests when only
+    # SessionAuthentication is configured — no WWW-Authenticate header
+    # is set, so DRF treats this as a permission denial, not auth failure.
     response = client.get('/api/auth/me/')
     assert response.status_code == 403
 
