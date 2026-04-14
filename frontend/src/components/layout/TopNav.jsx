@@ -1,5 +1,5 @@
 import { NavLink, useNavigate } from 'react-router-dom'
-import { LogOut, Wallet, Settings } from 'lucide-react'
+import { LogOut, Wallet } from 'lucide-react'
 import { useAuth } from '../../contexts/AuthContext'
 import { logout } from '../../api/auth'
 
