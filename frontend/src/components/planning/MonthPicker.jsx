@@ -1,3 +1,4 @@
+// frontend/src/components/planning/MonthPicker.jsx
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { format, addMonths, subMonths } from 'date-fns'
 
