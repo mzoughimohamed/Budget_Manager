@@ -1,4 +1,5 @@
 import csv
+from datetime import date as date_type
 from rest_framework import viewsets
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
@@ -19,11 +20,11 @@ class TransactionViewSet(viewsets.ModelViewSet):
     serializer_class = TransactionSerializer
 
     def get_queryset(self):
-        month = self.request.query_params.get('month')
+        start = self.request.query_params.get('start')
+        end = self.request.query_params.get('end')
         qs = Transaction.objects.all()
-        if month:
-            year, mon = month.split('-')
-            qs = qs.filter(date__year=int(year), date__month=int(mon))
+        if start and end:
+            qs = qs.filter(date__gte=start, date__lte=end)
         return qs
 
 
@@ -41,9 +42,11 @@ class IncomeSourceViewSet(viewsets.ModelViewSet):
 
 @api_view(['GET'])
 def summary_view(request):
+    start = request.query_params.get('start', '')
+    end = request.query_params.get('end', '')
     month = request.query_params.get('month', '')
-    if not month:
-        return Response({'error': 'month parameter required'}, status=400)
+    if not start or not end or not month:
+        return Response({'error': 'start, end, and month parameters required'}, status=400)
 
     year, mon = month.split('-')
     year, mon = int(year), int(mon)
@@ -52,7 +55,7 @@ def summary_view(request):
     total_income = income_sources.aggregate(total=Sum('amount'))['total'] or Decimal('0')
 
     expenses = Transaction.objects.filter(
-        type=Transaction.EXPENSE, date__year=year, date__month=mon
+        type=Transaction.EXPENSE, date__gte=start, date__lte=end
     )
     total_expenses = expenses.aggregate(total=Sum('amount'))['total'] or Decimal('0')
 
@@ -76,19 +79,19 @@ def summary_view(request):
 
 @api_view(['GET'])
 def export_csv(request):
-    month = request.query_params.get('month', '')
-    if not month:
-        return Response({'error': 'month parameter required'}, status=400)
-    year, mon = int(month.split('-')[0]), int(month.split('-')[1])
+    start = request.query_params.get('start', '')
+    end = request.query_params.get('end', '')
+    if not start or not end:
+        return Response({'error': 'start and end parameters required'}, status=400)
 
     response = HttpResponse(content_type='text/csv')
-    response['Content-Disposition'] = f'attachment; filename="budget-{month}.csv"'
+    response['Content-Disposition'] = f'attachment; filename="budget-{start}.csv"'
 
     writer = csv.writer(response)
     writer.writerow(['Date', 'Type', 'Category', 'Amount (TND)', 'Note'])
 
     transactions = Transaction.objects.filter(
-        date__year=year, date__month=mon
+        date__gte=start, date__lte=end
     ).select_related('category')
 
     for tx in transactions:
@@ -104,26 +107,29 @@ def export_csv(request):
 
 @api_view(['GET'])
 def export_pdf(request):
-    month = request.query_params.get('month', '')
-    if not month:
-        return Response({'error': 'month parameter required'}, status=400)
-    year, mon = int(month.split('-')[0]), int(month.split('-')[1])
+    start = request.query_params.get('start', '')
+    end = request.query_params.get('end', '')
+    if not start or not end:
+        return Response({'error': 'start and end parameters required'}, status=400)
+
+    start_date = date_type.fromisoformat(start)
+    year, mon = start_date.year, start_date.month
 
     response = HttpResponse(content_type='application/pdf')
-    response['Content-Disposition'] = f'attachment; filename="budget-{month}.pdf"'
+    response['Content-Disposition'] = f'attachment; filename="budget-{start}.pdf"'
 
     doc = SimpleDocTemplate(response, pagesize=A4)
     styles = getSampleStyleSheet()
     elements = []
 
-    elements.append(Paragraph(f'Budget Report — {month}', styles['Title']))
+    elements.append(Paragraph(f'Budget Report — {start} to {end}', styles['Title']))
     elements.append(Spacer(1, 12))
 
     income_sources = IncomeSource.objects.filter(month__year=year, month__month=mon)
     total_income = income_sources.aggregate(total=Sum('amount'))['total'] or Decimal('0')
 
     transactions = Transaction.objects.filter(
-        type=Transaction.EXPENSE, date__year=year, date__month=mon
+        type=Transaction.EXPENSE, date__gte=start, date__lte=end
     ).select_related('category')
     total_expenses = transactions.aggregate(total=Sum('amount'))['total'] or Decimal('0')
 
