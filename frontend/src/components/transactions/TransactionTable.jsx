@@ -1,11 +1,12 @@
-// frontend/src/components/transactions/TransactionTable.jsx
 import { Pencil, Trash2 } from 'lucide-react'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { deleteTransaction } from '../../api/transactions'
 import { format } from 'date-fns'
+import { useTranslation } from '../../contexts/LanguageContext'
 
 export default function TransactionTable({ transactions, onEdit, month, cycleStartDay }) {
   const qc = useQueryClient()
+  const { t } = useTranslation()
   const deleteMutation = useMutation({
     mutationFn: deleteTransaction,
     onSuccess: () => {
@@ -15,7 +16,7 @@ export default function TransactionTable({ transactions, onEdit, month, cycleSta
   })
 
   if (transactions.length === 0) {
-    return <p className="text-center text-gray-400 py-10">No transactions this month</p>
+    return <p className="text-center text-gray-400 py-10">{t('transactions_none')}</p>
   }
 
   return (
@@ -24,11 +25,11 @@ export default function TransactionTable({ transactions, onEdit, month, cycleSta
         <table className="w-full text-sm">
           <thead className="bg-gray-50 text-gray-500 text-xs uppercase">
             <tr>
-              <th className="px-4 py-3 text-left">Date</th>
-              <th className="px-4 py-3 text-left">Type</th>
-              <th className="px-4 py-3 text-left">Category</th>
-              <th className="px-4 py-3 text-right">Amount</th>
-              <th className="px-4 py-3 text-left">Note</th>
+              <th className="px-4 py-3 text-left">{t('common_date')}</th>
+              <th className="px-4 py-3 text-left">{t('common_type')}</th>
+              <th className="px-4 py-3 text-left">{t('common_category')}</th>
+              <th className="px-4 py-3 text-right">{t('common_amount')}</th>
+              <th className="px-4 py-3 text-left">{t('common_note')}</th>
               <th className="px-4 py-3" />
             </tr>
           </thead>
@@ -42,7 +43,7 @@ export default function TransactionTable({ transactions, onEdit, month, cycleSta
                   <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${
                     tx.type === 'expense' ? 'bg-red-100 text-app-danger' : 'bg-green-100 text-app-success'
                   }`}>
-                    {tx.type}
+                    {tx.type === 'expense' ? t('transactions_expense') : t('transactions_income')}
                   </span>
                 </td>
                 <td className="px-4 py-3 text-gray-600">{tx.category_detail?.name || '—'}</td>
@@ -57,10 +58,7 @@ export default function TransactionTable({ transactions, onEdit, month, cycleSta
                     <button onClick={() => onEdit(tx)} className="text-gray-400 hover:text-gray-700">
                       <Pencil size={15} />
                     </button>
-                    <button
-                      onClick={() => deleteMutation.mutate(tx.id)}
-                      className="text-gray-400 hover:text-app-danger"
-                    >
+                    <button onClick={() => deleteMutation.mutate(tx.id)} className="text-gray-400 hover:text-app-danger">
                       <Trash2 size={15} />
                     </button>
                   </div>
