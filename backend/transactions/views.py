@@ -112,6 +112,8 @@ def export_pdf(request):
     if not start or not end:
         return Response({'error': 'start and end parameters required'}, status=400)
 
+    # Income sources are keyed by calendar month (the cycle identifier),
+    # not by the date range. Use the calendar month of the cycle start date.
     start_date = date_type.fromisoformat(start)
     year, mon = start_date.year, start_date.month
 

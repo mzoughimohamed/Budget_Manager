@@ -127,3 +127,15 @@ def test_export_pdf(auth_client, category):
     assert response.status_code == 200
     assert response['Content-Type'] == 'application/pdf'
     assert response.content[:4] == b'%PDF'
+
+
+@pytest.mark.django_db
+def test_export_csv_missing_params_returns_400(auth_client):
+    response = auth_client.get('/api/export/csv/?start=2026-04-01')
+    assert response.status_code == 400
+
+
+@pytest.mark.django_db
+def test_export_pdf_missing_params_returns_400(auth_client):
+    response = auth_client.get('/api/export/pdf/?start=2026-04-01')
+    assert response.status_code == 400
