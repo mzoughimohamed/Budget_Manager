@@ -3,7 +3,7 @@ import { format } from 'date-fns'
 import { getSettings } from '../api/settings'
 
 export function useCycleSettings() {
-  const { data } = useQuery({
+  const { data, isLoading, error } = useQuery({
     queryKey: ['settings'],
     queryFn: () => getSettings().then((r) => r.data),
   })
@@ -14,9 +14,9 @@ export function useCycleSettings() {
     // month = 'YYYY-MM'
     const [year, mon] = month.split('-').map(Number)
     const start = new Date(year, mon - 1, cycleStartDay)
-    // end = same day next month minus 1 day
-    // new Date(year, mon, 0) = last day of month `mon-1`
-    // new Date(year, mon, cycleStartDay - 1) = day before next cycle start
+    // day argument (cycleStartDay - 1) rolls JS back to the day before
+    // the next cycle start; when cycleStartDay=1 this equals new Date(year, mon, 0)
+    // which is the last day of the current month
     const endDate = new Date(year, mon, cycleStartDay - 1)
     const startStr = format(start, 'yyyy-MM-dd')
     const endStr = format(endDate, 'yyyy-MM-dd')
@@ -30,5 +30,5 @@ export function useCycleSettings() {
     }
   }
 
-  return { cycleStartDay, cycleRange }
+  return { cycleStartDay, cycleRange, isLoading, error }
 }
