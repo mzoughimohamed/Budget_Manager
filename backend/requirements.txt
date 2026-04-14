@@ -2,3 +2,6 @@ django
 djangorestframework
 psycopg2-binary
 django-cors-headers
+reportlab
+pytest
+pytest-django
