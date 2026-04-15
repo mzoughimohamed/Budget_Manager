@@ -1,6 +1,6 @@
 # Budget App
 
-A personal monthly budgeting application built for a single user. Track income and expenses, set category budget limits, visualize spending, and export monthly reports — accessible from both desktop and mobile.
+A personal monthly budgeting application built for a single user. Track income and expenses, set category budget limits, visualize spending, and export monthly reports — accessible from both desktop and mobile, in English, French, or Arabic.
 
 ---
 
@@ -9,12 +9,14 @@ A personal monthly budgeting application built for a single user. Track income a
 - **Password-protected** — single-user login wall, no registration
 - **Overview dashboard** — monthly stats, donut chart, interactive calendar, category breakdown
 - **Income tracking** — add multiple income sources (salary, freelance, etc.) per month
-- **Expense categories** — 12 preset categories, fully customizable
+- **Expense categories** — 12 preset categories, fully customizable (add, rename, recolor, change icon)
 - **Budget limits** — set a monthly spending limit per category with overspend indicators
 - **Interactive calendar** — days with transactions are highlighted; click any day to view or add transactions
 - **Transactions** — log, edit, and delete income and expense entries
 - **Planning** — manage income sources and category budget limits by month
 - **Export** — download monthly reports as CSV or PDF
+- **Budget cycle** — configurable start day (e.g. cycle starts on the 25th of each month)
+- **Multi-language** — English, French, and Arabic; Arabic triggers a full RTL layout
 - **Mobile-friendly** — responsive layout with bottom tab navigation on small screens
 
 ---
@@ -41,7 +43,7 @@ A personal monthly budgeting application built for a single user. Track income a
 | Charts | Recharts |
 | Icons | Lucide React |
 | Dates | date-fns |
-| Tests | Vitest + React Testing Library |
+| Tests | Vitest |
 
 ### Infrastructure
 | | |
@@ -106,7 +108,7 @@ budget_app_dockerized/
 │   │   ├── urls.py
 │   │   └── wsgi.py
 │   ├── accounts/             # Auth endpoints (login, logout, me)
-│   ├── budgets/              # Category model + CRUD API + seed command
+│   ├── budgets/              # Category + Settings models, CRUD APIs
 │   │   └── management/commands/seed_categories.py
 │   └── transactions/         # Transaction, IncomeSource models + APIs
 │                             # Summary endpoint + CSV/PDF export
@@ -115,18 +117,21 @@ budget_app_dockerized/
     ├── vite.config.js
     ├── tailwind.config.js
     └── src/
+        ├── main.jsx
         ├── App.jsx
         ├── api/              # Axios modules (auth, categories, transactions, ...)
-        ├── contexts/         # AuthContext
+        ├── contexts/         # AuthContext, LanguageContext
+        ├── hooks/            # useCycleSettings
+        ├── i18n/             # en.js, fr.js, ar.js translation dictionaries
         ├── components/
-        │   ├── layout/       # TopNav, MobileBottomNav, ProtectedRoute
+        │   ├── layout/       # TopNav, MobileBottomNav, LangSwitcher, ProtectedRoute
         │   ├── overview/     # StatsRow, BudgetDonutChart, CategorySidebar,
         │   │                 # MonthCalendar, DayPanel, TopCategoryCards
         │   ├── planning/     # IncomeSourcesTable, CategoryBudgetTable, MonthPicker
         │   ├── transactions/ # TransactionTable, TransactionForm
         │   └── export/       # ExportForm
         └── pages/            # OverviewPage, PlanningPage, TransactionsPage,
-                              # TransactionsPage, ExportPage, LoginPage
+                              # ExportPage, LoginPage, SettingsPage
 ```
 
 ---
@@ -148,12 +153,18 @@ All endpoints require authentication except `POST /api/auth/login/`.
 | GET | `/api/categories/` | List all categories |
 | POST | `/api/categories/` | Create a custom category |
 | PATCH | `/api/categories/{id}/` | Edit name, icon, color, or budget limit |
-| DELETE | `/api/categories/{id}/` | Delete a category |
+| DELETE | `/api/categories/{id}/` | Delete a custom category (presets protected) |
+
+### Settings
+| Method | Endpoint | Description |
+|---|---|---|
+| GET | `/api/settings/` | Get current settings (cycle start day) |
+| PATCH | `/api/settings/` | Update cycle start day (1–28) |
 
 ### Transactions
 | Method | Endpoint | Description |
 |---|---|---|
-| GET | `/api/transactions/?month=YYYY-MM` | List transactions for a month |
+| GET | `/api/transactions/?start=&end=` | List transactions for a date range |
 | POST | `/api/transactions/` | Create a transaction |
 | PATCH | `/api/transactions/{id}/` | Edit a transaction |
 | DELETE | `/api/transactions/{id}/` | Delete a transaction |
@@ -169,9 +180,22 @@ All endpoints require authentication except `POST /api/auth/login/`.
 ### Summary & Export
 | Method | Endpoint | Description |
 |---|---|---|
-| GET | `/api/summary/?month=YYYY-MM` | Monthly totals + per-category breakdown |
-| GET | `/api/export/csv/?month=YYYY-MM` | Download transactions as CSV |
-| GET | `/api/export/pdf/?month=YYYY-MM` | Download monthly report as PDF |
+| GET | `/api/summary/?start=&end=&month=` | Monthly totals + per-category breakdown |
+| GET | `/api/export/csv/?start=&end=` | Download transactions as CSV |
+| GET | `/api/export/pdf/?start=&end=` | Download monthly report as PDF |
+
+---
+
+## Pages
+
+| Route | Page | Description |
+|---|---|---|
+| `/login` | Login | Password gate |
+| `/` | Overview | Dashboard: stats, donut chart, calendar, category breakdown |
+| `/planning` | Planning | Manage income sources and category budget limits |
+| `/transactions` | Transactions | Log and manage all income and expense entries |
+| `/export` | Export | Download monthly CSV or PDF report |
+| `/settings` | Settings | Language, budget cycle start day, category management |
 
 ---
 
@@ -194,7 +218,31 @@ Seeded automatically on first startup:
 | Savings | piggy-bank |
 | Other | circle-dot |
 
-All categories are fully editable — rename, recolor, change the icon, or set a monthly budget limit.
+Preset categories can be edited (name, icon, color, budget limit) but not deleted. Custom categories can be created and deleted freely.
+
+---
+
+## Language Support
+
+The app ships with **English**, **French**, and **Arabic**. Switch language from the top navigation bar or the Settings page.
+
+- Language preference is saved in `localStorage` and restored on next visit
+- Selecting Arabic switches the entire layout to RTL (`dir="rtl"` on `<html>`)
+- The language switcher shows: `EN · FR · ع`
+
+---
+
+## Budget Cycle
+
+The budget cycle start day is configurable (default: 1st of each month). Setting it to, say, 25 means your "April cycle" runs April 25 – May 24. The calendar, stats, and export all use the configured cycle range.
+
+Change it under **Settings → Budget Cycle**.
+
+---
+
+## Currency
+
+All amounts are in **Tunisian Dinar (TND)**. Numbers are formatted using the `fr-TN` locale.
 
 ---
 
@@ -211,13 +259,7 @@ docker compose exec backend pytest -v
 ### Run frontend tests
 
 ```bash
-docker compose exec frontend npm test
-```
-
-Or locally:
-
-```bash
-cd frontend && npm test
+cd frontend && npx vitest run
 ```
 
 ### Seed categories manually
@@ -230,25 +272,8 @@ The command is idempotent — safe to run multiple times.
 
 ### Django admin
 
-```bash
-# Access at http://localhost:8000/admin/
-# Login with your superuser credentials
+```
+http://localhost:8000/admin/
 ```
 
----
-
-## Currency
-
-All amounts are in **Tunisian Dinar (TND)**. Numbers are formatted using the `fr-TN` locale.
-
----
-
-## Pages
-
-| Route | Page | Description |
-|---|---|---|
-| `/login` | Login | Password gate |
-| `/` | Overview | Dashboard: stats, chart, calendar, category breakdown |
-| `/planning` | Planning | Manage income sources and category budget limits |
-| `/transactions` | Transactions | Log and manage all income and expense entries |
-| `/export` | Export | Download monthly CSV or PDF report |
+Log in with your superuser credentials.
