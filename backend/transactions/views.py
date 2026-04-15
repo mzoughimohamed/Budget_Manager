@@ -48,11 +48,10 @@ def summary_view(request):
     if not start or not end or not month:
         return Response({'error': 'start, end, and month parameters required'}, status=400)
 
-    year, mon = month.split('-')
-    year, mon = int(year), int(mon)
-
-    income_sources = IncomeSource.objects.filter(month__year=year, month__month=mon)
-    total_income = income_sources.aggregate(total=Sum('amount'))['total'] or Decimal('0')
+    income_transactions = Transaction.objects.filter(
+        type=Transaction.INCOME, date__gte=start, date__lte=end
+    )
+    total_income = income_transactions.aggregate(total=Sum('amount'))['total'] or Decimal('0')
 
     expenses = Transaction.objects.filter(
         type=Transaction.EXPENSE, date__gte=start, date__lte=end
