@@ -13,7 +13,7 @@ import IncomeList from '../components/shared/IncomeList'
 
 export default function PlanningPage() {
   const [month, setMonth] = useState(format(new Date(), 'yyyy-MM'))
-  const { cycleRange } = useCycleSettings()
+  const { cycleStartDay, cycleRange } = useCycleSettings()
   const { start, end, label } = cycleRange(month)
   const { t } = useTranslation()
 
@@ -28,7 +28,7 @@ export default function PlanningPage() {
   })
 
   const { data: transactions = [] } = useQuery({
-    queryKey: ['transactions', month],
+    queryKey: ['transactions', month, cycleStartDay],
     queryFn: () => getTransactions({ start, end }).then((r) => r.data),
   })
 
