@@ -75,4 +75,8 @@ export default {
   settings_icon: 'الأيقونة',
   settings_color: 'اللون',
   settings_language_title: 'اللغة',
+
+  income_received_title: 'الدخل المحصّل',
+  income_received_empty: 'لا يوجد دخل مسجّل هذه الدورة',
+  income_received_total: 'الإجمالي',
 }

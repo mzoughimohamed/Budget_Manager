@@ -75,4 +75,8 @@ export default {
   settings_icon: 'Icône',
   settings_color: 'Couleur',
   settings_language_title: 'Langue',
+
+  income_received_title: 'Revenus perçus',
+  income_received_empty: 'Aucun revenu ce cycle',
+  income_received_total: 'Total',
 }
