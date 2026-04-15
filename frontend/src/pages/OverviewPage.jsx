@@ -11,6 +11,7 @@ import BudgetDonutChart from '../components/overview/BudgetDonutChart'
 import CategorySidebar from '../components/overview/CategorySidebar'
 import MonthCalendar from '../components/overview/MonthCalendar'
 import TopCategoryCards from '../components/overview/TopCategoryCards'
+import IncomeList from '../components/shared/IncomeList'
 
 export default function OverviewPage() {
   const [month, setMonth] = useState(format(new Date(), 'yyyy-MM'))
@@ -51,8 +52,9 @@ export default function OverviewPage() {
           <MonthCalendar transactions={transactions} cycleStart={start} cycleEnd={end} />
           <TopCategoryCards byCategory={summary.by_category} />
         </div>
-        <div>
+        <div className="space-y-6">
           <CategorySidebar byCategory={summary.by_category} />
+          <IncomeList transactions={transactions} />
         </div>
       </div>
     </div>
